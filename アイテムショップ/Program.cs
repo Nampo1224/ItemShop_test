@@ -238,7 +238,7 @@ namespace Nampospace
         }
         //お店はキャラクタに対してアイテムをいくつか売る。
         //売りたい個数を指定して売るが、持ち物にそれがなかったらfalseとする。
-        //オーバーロードしたけど使わないんじゃね？
+        //オーバーロードしたけど使わないんじゃね？←消した。
         public bool SellToChara(Item item , Charactar chara,ref int partygold)
         {
             //ショップのリストにアイテムがあるか？かつ、売りたい個数以上持っているか？かつ、パーティゴールドはあるか？
@@ -349,7 +349,7 @@ namespace Nampospace
         public int AttackPoint { set; get; }
         public int DeffencePoint { set; get; }
 
-        //名前だけ必ず決めるようにする。
+        //名前だけ必ず決めるようにする。HPとかは適当に決めた。そのうち使うか？
         public Charactar(string name)
         {
             this.Name = name;
@@ -363,6 +363,7 @@ namespace Nampospace
         }
 
         //アイテムを持たせたり減らしたりする。持ち物制限とかはここら辺でやる。(10種類以上は持たせないみたいな)
+        //オペレーターのオーバーライドですっきりにしたいけど、読んでないからとりあえずこれ。一応消せなかったらfalseが戻り値だけど、使ってない。
         public void AddItem(Item i)
         {
             if (ItemList.ContainsKey(i.Name))
