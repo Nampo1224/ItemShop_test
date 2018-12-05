@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // アセンブリに関する一般情報は以下の属性セットをとおして制御されます。
 // アセンブリに関連付けられている情報を変更するには、
 // これらの属性値を変更してください。
-[assembly: AssemblyTitle("アイテムショップ")]
+[assembly: AssemblyTitle("ItemShop_test")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Microsoft")]
-[assembly: AssemblyProduct("アイテムショップ")]
+[assembly: AssemblyProduct("ItemShop_test")]
 [assembly: AssemblyCopyright("Copyright © Microsoft 2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // このプロジェクトが COM に公開される場合、次の GUID が typelib の ID になります
-[assembly: Guid("65505f53-ffc2-4f10-b122-965f18008bad")]
+[assembly: Guid("bdf85858-64c1-46b1-b397-9d9946fd69d3")]
 
 // アセンブリのバージョン情報は次の 4 つの値で構成されています:
 //

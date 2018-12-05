@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace アイテムショップ
+namespace ItemShop_test
 {
     static class Program
     {
@@ -16,20 +16,19 @@ namespace アイテムショップ
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());      
-            
+            Application.Run(new Form1());
         }
     }
 }
 
 namespace Nampospace
-{ 
+{
     //ゲームマスターがすべてのゲーム要素を管理する。
     class GameMaster
     {
         //バグ仕込む用//ここが更新点//更なる更新
         Item leaf;
-               
+
         public int SelectedChara { private set; get; }
 
         public Charactar sengo, uruoi, nampo;
@@ -78,7 +77,7 @@ namespace Nampospace
 
             //お店を作成
             itemshop = new ItemShop("お店１");
-            itemshop.AddItem(new Item("薬草",5));
+            itemshop.AddItem(new Item("薬草", 5));
             itemshop.AddItem(new Item("弓", 5));
             itemshop.AddItem(new Item("矢", 99));
             itemshop.AddItem(new Item("カイトシールド", 10));
@@ -136,7 +135,7 @@ namespace Nampospace
 
         //お店のときはお店の倍率にあわせて表示を変える。
         //もっといい方法ありそうだけど、わからん。あとメソッドの名前変えるべきか。
-        public void ShowItem(TextBox textline, Charactar chara,ItemShop shop)
+        public void ShowItem(TextBox textline, Charactar chara, ItemShop shop)
         {
             //表示する前に初期化
             textline.Text = "";
@@ -165,7 +164,7 @@ namespace Nampospace
                 }
             }
         }
-  
+
         //キャラクタのアイテムが見える！アイテムショップの情報を入れるといくらで売れるかわかる。
         //ここ微妙。消してもいいかも。
         public void CharaShowItem(TextBox textbox)
@@ -186,7 +185,7 @@ namespace Nampospace
             }
 
         }
-        public void CharaShowItem(TextBox textbox,ItemShop shop)
+        public void CharaShowItem(TextBox textbox, ItemShop shop)
         {
             switch (SelectedChara)
             {
@@ -228,7 +227,7 @@ namespace Nampospace
         public int Gold { get; set; } //アイテムショップはお金を持っている。
         public double BuyScale { get; private set; } //アイテムショップが買いつけるときの倍率
         public double SellScale { get; private set; } //アイテムショップが売りつけるときの倍率
-        
+
         public ItemShop(string name) : base(name)
         {
             Gold = 100;
@@ -239,7 +238,7 @@ namespace Nampospace
         //お店はキャラクタに対してアイテムをいくつか売る。
         //売りたい個数を指定して売るが、持ち物にそれがなかったらfalseとする。
         //オーバーロードしたけど使わないんじゃね？←消した。
-        public bool SellToChara(Item item , Charactar chara,ref int partygold)
+        public bool SellToChara(Item item, Charactar chara, ref int partygold)
         {
             //ショップのリストにアイテムがあるか？かつ、売りたい個数以上持っているか？かつ、パーティゴールドはあるか？
             if (this.ItemList.ContainsKey(item.Name) && this.ItemList[item.Name].Count >= item.Count && partygold >= (item.Value * SellScale * item.Count))
@@ -263,11 +262,11 @@ namespace Nampospace
                 return false;
             }
 
-        }       
+        }
 
-        public bool BuyFromChara(Item item, Charactar chara,ref int partygold)
+        public bool BuyFromChara(Item item, Charactar chara, ref int partygold)
         {
-            if (chara.ItemList.ContainsKey(item.Name) && chara.ItemList[item.Name].Count >= item.Count && Gold >= item.Value * BuyScale *item.Count)
+            if (chara.ItemList.ContainsKey(item.Name) && chara.ItemList[item.Name].Count >= item.Count && Gold >= item.Value * BuyScale * item.Count)
             {
                 //キャラのアイテムを減らす。
                 chara.RemoveItem(item);
@@ -288,7 +287,7 @@ namespace Nampospace
                 return false;
             }
         }
- 
+
     }
 
     class Item
@@ -311,7 +310,7 @@ namespace Nampospace
                 return this.count;
             }
         }
-        
+
         //アイテムの価値・コスト
         public int Value { get; }
 
@@ -328,7 +327,7 @@ namespace Nampospace
             this.count = count;
             this.Value = 10;
         }
-        public Item(string name, int count,int value)
+        public Item(string name, int count, int value)
         {
             this.Name = name;
             this.Count = count;
@@ -340,7 +339,7 @@ namespace Nampospace
     class Charactar
     {
         public string Name { get; }
-        public Dictionary<string,Item> ItemList { get; }//アイテムリストは見るだけ。
+        public Dictionary<string, Item> ItemList { get; }//アイテムリストは見るだけ。
         public int MaxHp { set; get; }
         public int Hp { set; get; }
         public int MaxMp { set; get; }
@@ -353,7 +352,7 @@ namespace Nampospace
         public Charactar(string name)
         {
             this.Name = name;
-            ItemList = new Dictionary<string,Item>();
+            ItemList = new Dictionary<string, Item>();
             MaxHp = 10;
             Hp = 10;
             MaxMp = 5;
@@ -390,7 +389,8 @@ namespace Nampospace
 
                 return true;
 
-            } else
+            }
+            else
             {
                 return false;
             }
@@ -403,11 +403,11 @@ namespace Nampospace
             i.Count = count;
             AddItem(i);
         }
-        public bool RemoveItem(Item i , int count)
+        public bool RemoveItem(Item i, int count)
         {
             i.Count = count;
             return RemoveItem(i);
-          
+
         }
 
         //アイテムリストのアイテム個数0だった場合は削除する,もっといい書き方あるはず
@@ -415,7 +415,7 @@ namespace Nampospace
         {
             List<string> temps = new List<string>();
 
-            foreach (Item items in ItemList.Values )
+            foreach (Item items in ItemList.Values)
             {
                 if (items.Count <= 0)
                 {
@@ -424,7 +424,7 @@ namespace Nampospace
                 }
             }
 
-            foreach(string name in temps)
+            foreach (string name in temps)
             {
                 ItemList.Remove(name);
             }

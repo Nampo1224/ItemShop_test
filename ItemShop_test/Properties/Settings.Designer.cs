@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace アイテムショップ.Properties
+namespace ItemShop_test.Properties
 {
 
 

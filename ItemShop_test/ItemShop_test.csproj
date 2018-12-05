@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{65505F53-FFC2-4F10-B122-965F18008BAD}</ProjectGuid>
+    <ProjectGuid>{BDF85858-64C1-46B1-B397-9D9946FD69D3}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>アイテムショップ</RootNamespace>
-    <AssemblyName>アイテムショップ</AssemblyName>
+    <RootNamespace>ItemShop_test</RootNamespace>
+    <AssemblyName>ItemShop_test</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
