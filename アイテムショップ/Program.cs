@@ -27,7 +27,7 @@ namespace Nampospace
     //ゲームマスターがすべてのゲーム要素を管理する。
     class GameMaster
     {
-        //バグ仕込む用
+        //バグ仕込む用//ここが更新点
         Item leaf;
                
         public int SelectedChara { private set; get; }
