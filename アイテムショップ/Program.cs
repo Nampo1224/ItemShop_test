@@ -208,7 +208,7 @@ namespace Nampospace
         public void SelectChara(int select)
         {
             //変な数字が入らないようにする
-            if (select >= 0 && select <= 2)
+            if (select >= 0 && select <= MainParty.Count)
             {
                 SelectedChara = select;
             }
