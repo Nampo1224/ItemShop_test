@@ -47,33 +47,41 @@ namespace Nampospace
 
             turn = 0;//よくわからないターン数
         
+            //薬草5個！バグ用
+            var leaf = new Item("薬草", 5);
 
             //キャラクターを適当に作る。特に表示とかはしてない。
 
             //戦後は弓３個と薬草10個持っている
             sengo = new Charactar("戦後");
-            sengo.AddItem(itemdic.GetItem("弓",3));
-            sengo.AddItem(itemdic.GetItem("薬草", 5));
+            sengo.AddItem(new Item("弓", 3));
+            //＜＜バグの元＞＞。薬草を5個持たせているようにみえる。***********************実はうるおいちゃんの薬草と共有されてる。
+            sengo.AddItem(leaf);
 
             uruoi = new Charactar("うるおい");
+            //＜＜バグの元＞＞。薬草を5個持たせているようにみえる。************************実はうるおいちゃんの戦後と共有されてる。
+            uruoi.AddItem(leaf);
             //うるおいは圧を3個持ってる
-            uruoi.AddItem(itemdic.GetItem("圧", 3));
-            uruoi.AddItem(itemdic.GetItem("薬草", 5));
+            uruoi.AddItem(new Item("圧", 3));
 
             //うるおいちゃんだけHPが高い！今回は意味ない
             uruoi.MaxHp += 6;
             uruoi.Hp += 6;
 
             nampo = new Charactar("Nampo");
+            //Nampoは薬草を3個持ってる
+            //nampo.AddItem(new Item("薬草", 3));
+            //↑の書き方でもいいが、Itemの設定を毎回書くのが面倒。
+
             //アイテム辞書からアイテムを追加、間違ったアイテム名を指定したときはテストアイテムがでる。
             nampo.AddItem(itemdic.GetItem("薬草！！",3));
 
             //お店を作成
             itemshop = new ItemShop("お店１");
-            itemshop.AddItem(itemdic.GetItem("薬草", 10));
-            itemshop.AddItem(itemdic.GetItem("弓", 5));
-            itemshop.AddItem(itemdic.GetItem("矢", 99));
-            itemshop.AddItem(itemdic.GetItem("剣", 5));
+            itemshop.AddItem(new Item("薬草", 5));
+            itemshop.AddItem(new Item("弓", 5));
+            itemshop.AddItem(new Item("矢", 99));
+            itemshop.AddItem(new Item("カイトシールド", 10));
 
             //パーティ作成
             MainParty = new List<Charactar>();
@@ -109,12 +117,12 @@ namespace Nampospace
             comboBox.Items.Add(nampo.Name);
         }
 
-        public void ShowItem(TextBox textline, List<Item> items)
+        public void ShowItem(TextBox textline, Dictionary<string, Item> items)
         {
             //表示する前に初期化
             textline.Text = "";
 
-            foreach (Item i in items)
+            foreach (Item i in items.Values)
             {
                 if (i != null)
                 {
@@ -136,7 +144,7 @@ namespace Nampospace
             //表示する前に初期化
             textline.Text = "";
 
-            foreach (Item i in chara.ItemList)
+            foreach (Item i in chara.ItemList.Values)
             {
                 if (i != null)
                 {
@@ -151,7 +159,7 @@ namespace Nampospace
             textline.Text = "";
 
             textline.Text += "お店の名前:\r\n「" + shop.Name + "」\r\n\r\n";
-            foreach (Item i in shop.ItemList)
+            foreach (Item i in shop.ItemList.Values)
             {
                 if (i != null)
                 {
@@ -249,10 +257,7 @@ namespace Nampospace
         public bool SellToChara(Item item, Charactar chara, ref int partygold)
         {
             //ショップのリストにアイテムがあるか？かつ、売りたい個数以上持っているか？かつ、パーティゴールドはあるか？
-
-            if (this.ItemList.Exists(n => n.ItemID == item.ItemID) &&
-                this.ItemList.Find(n => n.ItemID == item.ItemID).Count >= item.Count &&
-                partygold >= (item.Value * SellScale * item.Count))
+            if (this.ItemList.ContainsKey(item.Name) && this.ItemList[item.Name].Count >= item.Count && partygold >= (item.Value * SellScale * item.Count))
             {
                 //自分のアイテムを個数分減らす。
                 this.RemoveItem(item);
@@ -266,7 +271,6 @@ namespace Nampospace
                 partygold -= ((int)(item.Value * SellScale) * item.Count);
 
                 return true;
-
             }
             else
             {
@@ -278,10 +282,7 @@ namespace Nampospace
 
         public bool BuyFromChara(Item item, Charactar chara, ref int partygold)
         {
-
-            if (chara.ItemList.Exists(n => n.ItemID == item.ItemID) && 
-                chara.ItemList.Find(n => n.ItemID == item.ItemID).Count >= item.Count && 
-                Gold >= item.Value * BuyScale * item.Count)
+            if (chara.ItemList.ContainsKey(item.Name) && chara.ItemList[item.Name].Count >= item.Count && Gold >= item.Value * BuyScale * item.Count)
             {
                 //キャラのアイテムを減らす。
                 chara.RemoveItem(item);
@@ -295,7 +296,6 @@ namespace Nampospace
                 partygold += ((int)(item.Value * BuyScale) * item.Count);
 
                 return true;
-
             }
             else
             {
@@ -310,7 +310,7 @@ namespace Nampospace
     class Item
     {
         //itemIDは使ってない。
-        public int ItemID { get; }
+        int ItemID { get; }
         public string Name { get; }
         //アイテム個数
         int count;
@@ -349,7 +349,7 @@ namespace Nampospace
         {
             this.Value = value;
         }
-        
+        //アイテム辞書作ったのでこれいらない。個数指定もいらないんじゃね？
         public Item(int ID, string name, int count, int value) : this(name, count, value)
         {
             this.ItemID = ID;
@@ -361,7 +361,7 @@ namespace Nampospace
     class Charactar
     {
         public string Name { get; }
-        public List<Item> ItemList { get; }//アイテムリストは見るだけ。
+        public Dictionary<string, Item> ItemList { get; }//アイテムリストは見るだけ。
         public int MaxHp { set; get; }
         public int Hp { set; get; }
         public int MaxMp { set; get; }
@@ -374,7 +374,7 @@ namespace Nampospace
         public Charactar(string name)
         {
             this.Name = name;
-            ItemList = new List<Item>();
+            ItemList = new Dictionary<string, Item>();
             MaxHp = 10;
             Hp = 10;
             MaxMp = 5;
@@ -387,27 +387,24 @@ namespace Nampospace
         //オペレーターのオーバーライドですっきりにしたいけど、読んでないからとりあえずこれ。一応消せなかったらfalseが戻り値だけど、使ってない。
         public void AddItem(Item i)
         {
-            
-
-            if (ItemList.Exists(n => n.ItemID == i.ItemID))
+            if (ItemList.ContainsKey(i.Name))
             {
-                //キャラのアイテムリストにアイテムがあれば個数分増やす。
-                ItemList.Find(n => n.ItemID == i.ItemID).Count += i.Count;
+                //キャラのアイテムリストにアイテムがあれば個数分増やす
+                ItemList[i.Name].Count += i.Count;
             }
             else
             {
                 //キャラのアイテムリストにアイテムがなければ、アイテムを増やす。
-                ItemList.Add(i);
+                ItemList.Add(i.Name, i);
             }
         }
         public bool RemoveItem(Item i)
         {
-            
-            if (ItemList.Exists(n => n.ItemID == i.ItemID))
+            if (ItemList.ContainsKey(i.Name))
             {
                 //キャラのアイテムリストにアイテムがあれば個数分減らす。
                 //なお、countは0以下にならないので減らすだけなら問題ない。売るときは問題になる。
-                ItemList.Find(n => n.ItemID == i.ItemID).Count -= i.Count;
+                ItemList[i.Name].Count -= i.Count;
 
                 //個数が0なら消す
                 CheckItemlist();
@@ -417,7 +414,6 @@ namespace Nampospace
             }
             else
             {
-                //キャラのアイテムにアイテムがなければ何もしない。
                 return false;
             }
         }
@@ -439,23 +435,20 @@ namespace Nampospace
         //アイテムリストのアイテム個数0だった場合は削除する,もっといい書き方あるはず
         protected void CheckItemlist()
         {
-            var temps = new List<int>();
-            int tempindex = 0;
+            List<string> temps = new List<string>();
 
-            foreach (Item items in ItemList)
+            foreach (Item items in ItemList.Values)
             {
-                
                 if (items.Count <= 0)
                 {
                     //ItemList.Remove(name);
-                    temps.Add(tempindex);
+                    temps.Add(items.Name);
                 }
-                tempindex++;
             }
 
-            foreach (int index in temps)
+            foreach (string name in temps)
             {
-                ItemList.RemoveAt(index);
+                ItemList.Remove(name);
             }
         }
 
@@ -472,18 +465,17 @@ namespace Nampospace
             ItemDic = new Dictionary<string, Item>();
             ItemID = 0;
 
-            ItemAdd(new Item(ItemID,"テストアイテム", 1, 1));
-            ItemAdd(new Item(ItemID, "薬草", 1, 10));
-            ItemAdd(new Item(ItemID, "毒消し草", 1, 15));
-            ItemAdd(new Item(ItemID, "剣", 1, 30));
-            ItemAdd(new Item(ItemID, "盾", 1, 10));
-            ItemAdd(new Item(ItemID, "圧", 1, 50));
-            ItemAdd(new Item(ItemID, "弓", 1, 20));
-            ItemAdd(new Item(ItemID, "矢", 1, 1));
+            ItemAdd(new Item("テストアイテム", 1, 1));
+            ItemAdd(new Item("薬草", 1, 10));
+            ItemAdd(new Item("毒消し草", 1, 15));
+            ItemAdd(new Item("剣", 1, 30));
+            ItemAdd(new Item("盾", 1, 10));
+            ItemAdd(new Item("圧", 1, 50));
+            ItemAdd(new Item("弓", 1, 20));
+            ItemAdd(new Item("矢", 1, 1));
 
         }
-        //このメソッドでアイテムIDを順番につけてもらう。
-        //キャラクタのアイテムはList<Item>で管理して、ソートはID順にする？
+
         private void ItemAdd(Item item)
         {
             ItemDic.Add(item.Name, new Item(ItemID,item.Name,1,item.Value));
@@ -494,11 +486,11 @@ namespace Nampospace
         {
             if (ItemDic.ContainsKey(name))
             {
-                return new Item(ItemDic[name].ItemID,ItemDic[name].Name, 1, ItemDic[name].Value);
+                return new Item(ItemDic[name].Name, 1, ItemDic[name].Value);
             }
             else
             {
-                return new Item(0,ItemDic["テストアイテム"].Name, 1, ItemDic["テストアイテム"].Value);
+                return new Item(ItemDic["テストアイテム"].Name, 1, ItemDic["テストアイテム"].Value);
             }
         }
 
@@ -506,7 +498,7 @@ namespace Nampospace
         {
             if (ItemDic.ContainsKey(name))
             {
-                return new Item(ItemDic[name].ItemID,ItemDic[name].Name, count, ItemDic[name].Value);
+                return new Item(ItemDic[name].Name, count, ItemDic[name].Value);
             }
             else
             {
