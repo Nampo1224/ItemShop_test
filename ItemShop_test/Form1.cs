@@ -13,11 +13,13 @@ namespace ItemShop_test
     public partial class Form1 : Form
     {
         Nampospace.GameMaster gm;
+        Nampospace.ItemDictionary itemdic;
 
         public Form1()
         {
             InitializeComponent();
             gm = new Nampospace.GameMaster();
+            itemdic = new Nampospace.ItemDictionary();
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -52,7 +54,7 @@ namespace ItemShop_test
         private void button1_Click(object sender, EventArgs e)
         {
             //このままだと薬草しか売り買いできない。選択できるようにしたい
-            gm.itemshop.BuyFromChara(new Nampospace.Item("薬草"), gm.MainParty[gm.SelectedChara], ref gm.PartyGold);
+            gm.itemshop.BuyFromChara(itemdic.GetItem("薬草"), gm.MainParty[gm.SelectedChara], ref gm.PartyGold);
 
             //同じ箇所
             gm.CharaShowItem(textBox1, gm.itemshop);
@@ -64,7 +66,7 @@ namespace ItemShop_test
         private void button2_Click(object sender, EventArgs e)
         {
             //このままだと薬草しか売り買いできない。選択できるようにしたい
-            gm.itemshop.SellToChara(new Nampospace.Item("薬草"), gm.MainParty[gm.SelectedChara], ref gm.PartyGold);
+            gm.itemshop.SellToChara(itemdic.GetItem("薬草"), gm.MainParty[gm.SelectedChara], ref gm.PartyGold);
 
             //同じ箇所
             gm.CharaShowItem(textBox1, gm.itemshop);
