@@ -42,6 +42,9 @@ namespace Nampospace
         //ゲームマスターが作られたときに初期化する。RPG作るの大変だなー
         public GameMaster()
         {
+            //アイテム辞書を読み込む
+            ItemDictionary itemdic = new ItemDictionary();
+
             turn = 0;//よくわからないターン数
         
             //薬草5個！バグ用
@@ -67,7 +70,11 @@ namespace Nampospace
 
             nampo = new Charactar("Nampo");
             //Nampoは薬草を3個持ってる
-            nampo.AddItem(new Item("薬草", 3));
+            //nampo.AddItem(new Item("薬草", 3));
+            //↑の書き方でもいいが、Itemの設定を毎回書くのが面倒。
+
+            //アイテム辞書からアイテムを追加、間違ったアイテム名を指定したときはテストアイテムがでる。
+            nampo.AddItem(itemdic.GetItem("薬草！！",3));
 
             //お店を作成
             itemshop = new ItemShop("お店１");
@@ -141,7 +148,7 @@ namespace Nampospace
             {
                 if (i != null)
                 {
-                    textline.Text += i.Name + ":" + i.Count + "個   " + i.Value * shop.BuyScale + " gold/個" + "\r\n";
+                    textline.Text += i.Name + ":" + i.Count + "個   " + (int)(i.Value * shop.BuyScale) + " gold/個" + "\r\n";
 
                 }
             }
@@ -156,7 +163,7 @@ namespace Nampospace
             {
                 if (i != null)
                 {
-                    textline.Text += i.Name + ":" + i.Count + "個   " + i.Value * shop.SellScale + " gold/個" + "\r\n";
+                    textline.Text += i.Name + ":" + i.Count + "個   " + (int)(i.Value * shop.SellScale) + " gold/個" + "\r\n";
 
                 }
             }
@@ -224,13 +231,14 @@ namespace Nampospace
         }
     }
 
+    //アイテムショップ（キャラクタを継承している）
     class ItemShop : Charactar
     {
-        //キャラクタークラスを継承してアイテムショップクラスを作成。
-        //アイテムショップはキャラクターなので、実はHPなど設定されている！
-        //キャラクタークラスを戦闘できるようにすると、必然的にアイテムショップとも戦闘できる！
+        //キャラクタクラスを継承してアイテムショップクラスを作成。
+        //アイテムショップはキャラクタなので、実はHPなど設定されている！
+        //キャラクタクラスを戦闘できるようにすると、必然的にアイテムショップとも戦闘できる！
         //良い継承かはわからん。店を拡張するなら店の中に店員がいてほしいよね。
-        //とりあえず、継承のためこれにした。
+        //とりあえず、継承の勉強のためこれにした。
 
         public int Gold { get; set; } //アイテムショップはお金を持っている。
         public double BuyScale { get; private set; } //アイテムショップが買いつけるときの倍率
@@ -298,6 +306,7 @@ namespace Nampospace
 
     }
 
+    //アイテム
     class Item
     {
         //itemIDは使ってない。
@@ -323,27 +332,32 @@ namespace Nampospace
         public int Value { get; }
 
         //コンストラクタのオーバーロード
+        //new Item(～)を好きにできるようにしておく。いらないやつもあるだろう。
         public Item(string name)
         {
+            this.ItemID = 0;
             this.Name = name;
             this.count = 1;
             this.Value = 10;
         }
-        public Item(string name, int count)
+        public Item(string name, int count):this(name)
         {
-            this.Name = name;
             this.count = count;
             this.Value = 10;
         }
-        public Item(string name, int count, int value)
+        public Item(string name, int count, int value):this(name,count)
         {
-            this.Name = name;
-            this.Count = count;
             this.Value = value;
         }
-
+        //アイテム辞書作ったのでこれいらない。個数指定もいらないんじゃね？
+        public Item(int ID, string name, int count, int value) : this(name, count, value)
+        {
+            this.ItemID = ID;
+            
+        }
     }
 
+    //キャラクタ
     class Charactar
     {
         public string Name { get; }
@@ -438,6 +452,59 @@ namespace Nampospace
             }
         }
 
+    }
+
+    //アイテム辞書。アイテムの設定などはここで最初に定義しておく。
+    class ItemDictionary
+    {
+        static int ItemID;
+        Dictionary<string, Item> ItemDic;
+
+        public ItemDictionary()
+        {
+            ItemDic = new Dictionary<string, Item>();
+            ItemID = 0;
+
+            ItemAdd(new Item("テストアイテム", 1, 1));
+            ItemAdd(new Item("薬草", 1, 10));
+            ItemAdd(new Item("毒消し草", 1, 15));
+            ItemAdd(new Item("剣", 1, 30));
+            ItemAdd(new Item("盾", 1, 10));
+            ItemAdd(new Item("圧", 1, 50));
+            ItemAdd(new Item("弓", 1, 20));
+            ItemAdd(new Item("矢", 1, 1));
+
+        }
+
+        private void ItemAdd(Item item)
+        {
+            ItemDic.Add(item.Name, new Item(ItemID,item.Name,1,item.Value));
+            ItemID++;
+        }
+
+        public Item GetItem(string name)
+        {
+            if (ItemDic.ContainsKey(name))
+            {
+                return new Item(ItemDic[name].Name, 1, ItemDic[name].Value);
+            }
+            else
+            {
+                return new Item(ItemDic["テストアイテム"].Name, 1, ItemDic["テストアイテム"].Value);
+            }
+        }
+
+        public Item GetItem(string name,int count)
+        {
+            if (ItemDic.ContainsKey(name))
+            {
+                return new Item(ItemDic[name].Name, count, ItemDic[name].Value);
+            }
+            else
+            {
+                return new Item(ItemDic["テストアイテム"].Name, count, ItemDic["テストアイテム"].Value);
+            }
+        }
     }
 
 }
