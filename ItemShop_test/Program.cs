@@ -26,9 +26,6 @@ namespace Nampospace
     //ゲームマスターがすべてのゲーム要素を管理する。
     class GameMaster
     {
-        //バグ仕込む用//ここが更新点//更なる更新
-        Item leaf;
-
         public int SelectedChara { private set; get; }
 
         public Charactar sengo, uruoi, nampo;
@@ -41,17 +38,14 @@ namespace Nampospace
         //意味ないターン
         int turn;
 
+ 
         //ゲームマスターが作られたときに初期化する。RPG作るの大変だなー
         public GameMaster()
         {
-            MainParty = new List<Charactar>();
-
-            SelectedChara = 0;
-
             turn = 0;//よくわからないターン数
-
+        
             //薬草5個！バグ用
-            leaf = new Item("薬草", 5);
+            var leaf = new Item("薬草", 5);
 
             //キャラクターを適当に作る。特に表示とかはしてない。
 
@@ -83,10 +77,13 @@ namespace Nampospace
             itemshop.AddItem(new Item("カイトシールド", 10));
 
             //パーティ作成
+            MainParty = new List<Charactar>();
             MainParty.Add(sengo);
             MainParty.Add(uruoi);
             MainParty.Add(nampo);
 
+            //ここ微妙。もっといい書き方あると思う。パーティクラスにしたほうがよさそう。
+            SelectedChara = 0;
             PartyGold = 103;
         }
 
@@ -166,7 +163,7 @@ namespace Nampospace
         }
 
         //キャラクタのアイテムが見える！アイテムショップの情報を入れるといくらで売れるかわかる。
-        //ここ微妙。消してもいいかも。
+        //ここ微妙。消してもいいかも。パーティクラスにしていい感じに選択したい。
         public void CharaShowItem(TextBox textbox)
         {
             switch (SelectedChara)
@@ -214,6 +211,17 @@ namespace Nampospace
 
         }
 
+        //キャラクタのステータス表示
+        public void CharaShowStats(TextBox textbox,Charactar chara)
+        {
+            string temp = "";
+            temp += "名前 :" + chara.Name + "\r\n";
+            temp += "HP : " + chara.Hp +  "/" + chara.MaxHp + "\r\n";
+            temp += "MP : " + chara.Mp + "/" + chara.MaxMp + "\r\n";
+            temp += "攻撃 : " + chara.AttackPoint + "point\r\n";
+            temp += "防御 : " + chara.DeffencePoint + "point\r\n";
+            textbox.Text = temp;
+        }
     }
 
     class ItemShop : Charactar

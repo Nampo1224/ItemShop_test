@@ -25,6 +25,11 @@ namespace ItemShop_test
             gm.OnLoad(comboBox1);
             comboBox1.SelectedIndex = gm.SelectedChara;
 
+            gm.CharaShowStats(M1_textBox, gm.sengo);
+            gm.CharaShowStats(M2_textBox, gm.uruoi);
+            gm.CharaShowStats(M3_textBox, gm.nampo);
+
+
             //同じ４行が別の場所に後の２箇所書かれていて、修正とか不便
             gm.CharaShowItem(textBox1, gm.itemshop);
             gm.ShowItem(textBox2, gm.itemshop);
