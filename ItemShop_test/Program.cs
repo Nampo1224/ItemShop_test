@@ -47,22 +47,18 @@ namespace Nampospace
 
             turn = 0;//よくわからないターン数
         
-            //薬草5個！バグ用
-            var leaf = new Item("薬草", 5);
-
             //キャラクターを適当に作る。特に表示とかはしてない。
 
             //戦後は弓３個と薬草10個持っている
             sengo = new Charactar("戦後");
-            sengo.AddItem(new Item("弓", 3));
-            //＜＜バグの元＞＞。薬草を5個持たせているようにみえる。***********************実はうるおいちゃんの薬草と共有されてる。
-            sengo.AddItem(leaf);
+            sengo.AddItem(itemdic.GetItem("弓", 3));
+            sengo.AddItem(itemdic.GetItem("薬草",10));
+
 
             uruoi = new Charactar("うるおい");
-            //＜＜バグの元＞＞。薬草を5個持たせているようにみえる。************************実はうるおいちゃんの戦後と共有されてる。
-            uruoi.AddItem(leaf);
-            //うるおいは圧を3個持ってる
-            uruoi.AddItem(new Item("圧", 3));
+            //うるおいは薬草5個、圧を3個持ってる
+            uruoi.AddItem(itemdic.GetItem("薬草", 5));
+            uruoi.AddItem(itemdic.GetItem("圧", 3));
 
             //うるおいちゃんだけHPが高い！今回は意味ない
             uruoi.MaxHp += 6;
@@ -70,18 +66,15 @@ namespace Nampospace
 
             nampo = new Charactar("Nampo");
             //Nampoは薬草を3個持ってる
-            //nampo.AddItem(new Item("薬草", 3));
-            //↑の書き方でもいいが、Itemの設定を毎回書くのが面倒。
-
             //アイテム辞書からアイテムを追加、間違ったアイテム名を指定したときはテストアイテムがでる。
-            nampo.AddItem(itemdic.GetItem("薬草！！",3));
+            nampo.AddItem(itemdic.GetItem("薬草？？？",3));
 
             //お店を作成
             itemshop = new ItemShop("お店１");
-            itemshop.AddItem(new Item("薬草", 5));
-            itemshop.AddItem(new Item("弓", 5));
-            itemshop.AddItem(new Item("矢", 99));
-            itemshop.AddItem(new Item("カイトシールド", 10));
+            itemshop.AddItem(itemdic.GetItem("薬草", 5));
+            itemshop.AddItem(itemdic.GetItem("弓", 3));
+            itemshop.AddItem(itemdic.GetItem("矢", 3));
+            itemshop.AddItem(itemdic.GetItem("盾", 3));
 
             //パーティ作成
             MainParty = new List<Charactar>();
@@ -310,7 +303,7 @@ namespace Nampospace
     class Item
     {
         //itemIDは使ってない。
-        int ItemID { get; }
+        public int ItemID { get; }
         public string Name { get; }
         //アイテム個数
         int count;
@@ -465,20 +458,20 @@ namespace Nampospace
             ItemDic = new Dictionary<string, Item>();
             ItemID = 0;
 
-            ItemAdd(new Item("テストアイテム", 1, 1));
-            ItemAdd(new Item("薬草", 1, 10));
-            ItemAdd(new Item("毒消し草", 1, 15));
-            ItemAdd(new Item("剣", 1, 30));
-            ItemAdd(new Item("盾", 1, 10));
-            ItemAdd(new Item("圧", 1, 50));
-            ItemAdd(new Item("弓", 1, 20));
-            ItemAdd(new Item("矢", 1, 1));
+            ItemAdd("テストアイテム", 1);
+            ItemAdd("薬草", 10);
+            ItemAdd("毒消し草", 15);
+            ItemAdd("剣", 30);
+            ItemAdd("盾", 10);
+            ItemAdd("圧", 50);
+            ItemAdd("弓", 20);
+            ItemAdd("矢", 1);
 
         }
 
-        private void ItemAdd(Item item)
+        private void ItemAdd(string name,int value)
         {
-            ItemDic.Add(item.Name, new Item(ItemID,item.Name,1,item.Value));
+            ItemDic.Add(name, new Item(ItemID,name,1,value));
             ItemID++;
         }
 
@@ -486,11 +479,11 @@ namespace Nampospace
         {
             if (ItemDic.ContainsKey(name))
             {
-                return new Item(ItemDic[name].Name, 1, ItemDic[name].Value);
+                return new Item(ItemDic[name].ItemID,ItemDic[name].Name, 1, ItemDic[name].Value);
             }
             else
             {
-                return new Item(ItemDic["テストアイテム"].Name, 1, ItemDic["テストアイテム"].Value);
+                return new Item(0,ItemDic["テストアイテム"].Name, 1, ItemDic["テストアイテム"].Value);
             }
         }
 
@@ -498,11 +491,11 @@ namespace Nampospace
         {
             if (ItemDic.ContainsKey(name))
             {
-                return new Item(ItemDic[name].Name, count, ItemDic[name].Value);
+                return new Item(ItemDic[name].ItemID, ItemDic[name].Name, count, ItemDic[name].Value);
             }
             else
             {
-                return new Item(ItemDic["テストアイテム"].Name, count, ItemDic["テストアイテム"].Value);
+                return new Item(0, ItemDic["テストアイテム"].Name, count, ItemDic["テストアイテム"].Value);
             }
         }
     }
